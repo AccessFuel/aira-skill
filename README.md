@@ -3,15 +3,16 @@
 Use [AccessFuel](https://www.accessfuel.com) from an agent's visible built-in
 browser. The skill can answer KPI questions, create audiences and personas,
 and prepare unscheduled campaign drafts. It uses verified page tools when they
-are available. Until AccessFuel page tools ship, it opens a prefilled AIRA chat
-for you to review and send.
+are available and can operate the visible AIRA console when you ask it to perform
+the work. Otherwise it opens a prefilled AIRA chat for you to review and send.
 
 ```text
 /aira find customers who spent over $500 but haven't bought in 90 days, build a persona, draft a win-back email campaign
 ```
 
-The skill never enters credentials, automates console writes, sends or
-publishes content, schedules campaigns, or deletes data.
+The skill never enters credentials, sends or publishes content, schedules
+campaigns, or deletes data. It reads saved objects back and carries their IDs
+through audience, persona, and campaign handoffs.
 
 ## Requirements
 

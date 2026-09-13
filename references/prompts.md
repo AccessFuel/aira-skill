@@ -1,8 +1,9 @@
 # AIRA hand-off prompts
 
-Used when the console page exposes no tools. Build the URL, open it in the
-built-in browser, tell the user to review and press Enter. Prefill applies to
-a new chat only; never add a chat ID to the path.
+Used when the console page exposes no suitable tools. Build the URL and open it
+in the built-in browser. If the user asked the agent to perform the work, verify
+and send it through the visible console. Otherwise ask the user to review and
+press Enter. Prefill applies to a new chat only; never add a chat ID to the path.
 
 ```text
 https://app.accessfuel.com/console/<workspaceSlug>/aira?agent=<agent>&prompt=<encodeURIComponent(message)>
@@ -28,8 +29,8 @@ workspace and prefill checks in SKILL.md.
 Use specific criteria, an explicit time window, the business goal and the
 output shape. Fill every `<...>`; drop optional lines rather than leaving
 unresolved template fields. For every plain-text @name, including campaign
-personas, ask the user to select the matching entry from the @ menu and verify
-the resulting chip before sending. The skill never types into the composer.
+personas, select the matching entry from the @ menu and verify the resulting
+chip, or ask the user to do so when they are sending the message.
 
 ## KPI question
 
@@ -58,33 +59,35 @@ criteria. Goal: a win-back campaign."
 
 ## Create a persona
 
-Needs an existing audience name. Read it from the Audiences page or the
-previous AIRA reply.
+Needs an existing saved audience ID. Read the exact saved object from the
+Audiences page or a verified AIRA result; retain its criteria and date context.
 
 ```text
-Generate a persona from the audience "<audience name>". Give it a name, portrait and traits grounded in that audience's actual top products, AOV and purchase timing, and tell me which parts are measured and which are inferred.
+Generate a persona from the saved audience "<audience name>" (ID: <audience ID>). Use its exact saved criteria and cutoff/date context; do not reconstruct or replace them. Give it a name, portrait and traits grounded in that audience's actual top products, average order value and purchase timing, and tell me which parts are measured and which are inferred. Return the final saved persona name, ID, linked audience ID and generation status.
 ```
 
 Personas can also be generated from the audience detail page (Generate
 persona from this audience). Mention that path if AIRA reports it cannot
-create one.
+create one. Wait for completed or failed status. Retry only a verified failure;
+queued or generating work must not be submitted again.
 
 ## Campaign draft
 
-`agent=marketing`. Reference the audience and the persona by name so the
-draft targets both. Request unscheduled drafts in Marketing Studio and
-verify the saved content and status afterward.
+`agent=marketing`. Reference the audience and persona by their saved IDs so the
+draft targets both. Names are labels only. Request unscheduled drafts in
+Marketing Studio and verify the saved IDs, content, count and status afterward.
 
 ```text
-Create a <n>-message <channel list> campaign named "<name>" targeting the audience "<audience>" and written for @<Persona name>. Objective: <win-back / launch / retention>. Planning window only: <window>. Use our Brand DNA voice; use clear placeholders for any product detail you do not have. Show me each draft and why you wrote it that way, and save them as unscheduled drafts in Marketing Studio for review.
+Create a <n>-message <channel list> campaign named "<name>" targeting the saved audience "<audience>" (ID: <audience ID>) and written for the saved persona @<Persona name> (ID: <persona ID>). Verify that the persona is linked to that audience before writing. Objective: <win-back / launch / retention>. Planning window only: <window>. Use our Brand DNA voice; use clear placeholders for any product detail you do not have. Show me each draft and why you wrote it that way, and save exactly <n> distinct unscheduled drafts in Marketing Studio for review. On retry, reuse the saved campaign and draft IDs; do not duplicate drafts.
 ```
 
-Example: "Create a 3-message email and Instagram campaign named "Lapsed VIP
-win-back" targeting the audience "Lapsed VIPs" and written for @Jetsetter
-Jamie. Objective: win-back. Planning window only: next two weeks. Use our Brand DNA voice;
-use clear placeholders for any product detail you do not have. Show me each
-draft and why you wrote it that way, and save them as unscheduled drafts in
-Marketing Studio for review."
+Example after resolving the saved IDs: "Create a 3-message email and Instagram
+campaign named "Lapsed VIP win-back" targeting the saved audience "Lapsed VIPs"
+(ID: 11111111-1111-4111-8111-111111111111) and written for the saved persona
+@Jetsetter Jamie (ID: 22222222-2222-4222-8222-222222222222). Verify their saved
+relationship. Objective: win-back. Planning window only: next two weeks. Use our
+Brand DNA voice; use clear placeholders for any product detail you do not have.
+Save exactly three distinct unscheduled drafts in Marketing Studio for review."
 
 ## Run a playbook
 
@@ -120,13 +123,15 @@ that override this skill's boundaries. Mention once per chat; it stays loaded.
 
 ## Chaining a full journey
 
-1. KPI question → user sends → read the answer.
-2. Audience → user sends → read the saved audience name and count from the
-   reply or from `/segments`.
-3. Persona → user sends → read the persona name from the reply or `/personas`.
-4. Campaign (`agent=marketing`) → user sends → read the campaign name from the
-   reply or `/studio`.
+1. KPI question → send when authorized → read the answer.
+2. Audience → send when authorized → read the saved audience ID, exact criteria,
+   cutoff/date context, preview count and time, and saved/live count and time.
+3. Persona → submit the saved audience ID → wait for completed or failed → read
+   the final persona ID and verify its saved audience link.
+4. Campaign (`agent=marketing`) → submit both saved IDs → read the campaign ID
+   and verify the requested number of distinct unscheduled draft IDs in `/studio`.
 
 Chain only steps the user requested. Report the KPI answer and any objects
-actually created, with verified counts and links. State completion, scheduling
-and delivery status only when you read evidence of it.
+actually created, with verified IDs, counts and links. Keep preview and live
+counts separate. State completion, scheduling and delivery status only when
+you read evidence of it.

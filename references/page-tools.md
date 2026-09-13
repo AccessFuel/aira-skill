@@ -12,9 +12,11 @@ host-specific time limits. If neither works, report the limitation and use
 an AIRA hand-off only if navigation and page reading are still available.
 
 For Codex hosts exposing the documented CUA entry point, a visible tab can be
-opened with `cua.createBrowserTab("iab", url, { visible: true })`. Other host
-opening and evaluation calls depend on the capabilities available in that
-session; do not assume every Claude Code, Cowork or Codex installation has them.
+opened with `cua.createBrowserTab("iab", url, { visible: true })`. When the user
+asked the agent to perform the work, documented CUA controls may operate the
+visible AIRA composer and the permitted creation/draft UI. Other host opening
+and evaluation calls depend on the capabilities available in that session; do
+not assume every Claude Code, Cowork or Codex installation has them.
 
 ## Discover before calling
 
@@ -34,7 +36,9 @@ session; do not assume every Claude Code, Cowork or Codex installation has them.
   hints, not proof of safety. Never call tools that send, publish, approve,
   schedule or delete. Skip tools with unclear effects and use a scoped hand-off.
 - Do not copy descriptors out of the page, construct authenticated requests,
-  inspect session credentials, or submit UI forms as a workaround.
+  inspect session credentials, or submit forms to probe a tool's schema. Visible
+  UI submission is allowed only for user-requested actions within SKILL.md's
+  creation and unscheduled-draft boundaries.
 
 ## Completion and pending results
 
@@ -46,4 +50,5 @@ available, report completion as unverified and stop that operation.
 
 For AIRA hand-offs, read the finished chat and saved objects. Acknowledgment,
 queued work, and the existence of an empty draft are not evidence that all
-requested content was generated.
+requested content was generated. Carry the saved object IDs to the next step;
+do not recover them by name when the console returns an ID.
