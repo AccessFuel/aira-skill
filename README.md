@@ -50,8 +50,9 @@ mkdir -p .claude/skills
 git clone https://github.com/AccessFuel/aira-skill.git .claude/skills/aira
 ```
 
-Invoke it as `/aira`. Commit `.claude/skills/aira` if the whole team should
-receive the skill with the project.
+Invoke it as `/aira`. The clone remains independently updateable. Teams that
+want to pin it in their repository can add the public repository as a Git
+submodule at the same path.
 
 ### Standalone personal install
 
