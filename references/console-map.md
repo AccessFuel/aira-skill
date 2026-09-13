@@ -43,6 +43,8 @@ Docs: `/docs/audiences/segments`
   Actions → export CSV (Standard, Google Ads, Facebook, Klaviyo).
 - Before creating: check existing audiences, including the defaults. Reuse one
   only after verifying its criteria match the requested thresholds and period.
+- A preview estimate and a saved/live count are different observations. Record
+  their labels, timestamps and freshness instead of presenting them as one count.
 
 ## Personas
 
@@ -56,10 +58,15 @@ Docs: `/docs/audiences/personas`
   members, generates the portrait, infers traits.
 - Refresh persona re-reads the current audience; the portrait stays unless
   regenerated.
+- Generation has durable queued, generating, completed and failed states. Use
+  the final saved persona ID and its saved audience relationship. Retry failed
+  work only; do not duplicate queued or generating requests.
 - Use in chat with `@<Persona name>`. Persona = voice; audience = the list.
   A campaign brief uses both.
 - The docs distinguish measured facts (size, revenue, top products) from AI
   inference (traits, tone). Keep that distinction in reports.
+- Average order value is revenue/orders; average lifetime spend is
+  revenue/customers. Keep both labels explicit.
 
 ## Marketing Studio and campaigns
 
@@ -75,6 +82,9 @@ Source: `/docs/changelog`, entries 0.19.18 and 0.19.26.
   why. Every draft goes to Marketing Studio for review. Ask AIRA to keep all drafts
   unscheduled, apply saved Brand DNA, and mark missing product details with
   placeholders. Verify the resulting state before reporting completion.
+- Resolve selected personas and audiences by saved ID in the current workspace.
+  Confirm their saved relationship, and preserve existing draft IDs during
+  campaign updates or retries.
 - Docs examples: "Create a three-post launch campaign for LinkedIn and
   Instagram next week." / "Update the summer campaign for email and show me
   the drafts to review."

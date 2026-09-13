@@ -8,8 +8,10 @@ metadata:
 # AIRA
 
 `/aira [request]` opens AccessFuel in the host's visible built-in browser.
-Use verified page tools when available; otherwise prefill an AIRA chat for
-the user to send. Read results before reporting completion.
+Use verified page tools when available. If the user asked you to perform the
+work, you may operate the visible console for the permitted creation and draft
+actions below. Otherwise prefill an AIRA chat for the user to send. Read saved
+results before reporting completion.
 
 ```text
 /aira find customers who spent over $500 but haven't bought in 90 days, build a persona, draft a win-back email campaign
@@ -20,9 +22,11 @@ the user to send. Read results before reporting completion.
 - **Analysis, requested audiences/personas, and unscheduled drafts only.**
   Never send, publish, approve, schedule, or delete, directly or through AIRA,
   a playbook, or another skill. Decline that part of a request.
-- **Never automate console UI writes.** No clicking, typing, pasting, dragging,
-  form submission, or Send/Enter automation. Navigation and reading page text
-  are allowed. The user signs in and submits messages.
+- Console writes require a user request to perform the work. That request may
+  authorize creating the requested audience or persona and saving unscheduled
+  drafts through verified page tools or the visible AIRA UI. It never authorizes
+  sending, publishing, approving, scheduling, deleting, or changing credentials.
+  The user completes sign-in and any credential or verification-code entry.
 - **Never enter, copy, inspect, or request passwords, cookies, tokens or codes.**
   Keep customer rows and sensitive document contents out of URL prompts.
   Report only workspace information needed for the user's request.
@@ -63,12 +67,15 @@ you may still use the hand-off if navigation and page reading work.
 
 1. Read workspace context, data freshness and existing objects as needed.
    Reuse audiences/personas only when their verified criteria match the request.
-2. Use the discovered schema and exact object references for the smallest
+2. Treat saved IDs as authoritative. Resolve every supplied audience, persona,
+   and campaign ID in the current workspace; do not replace one from chat history
+   or a name match. Reject mismatched criteria or relationships before writing.
+3. Use the discovered schema and exact object references for the smallest
    requested change. Before saving an audience, show its expected match count
    for those criteria. Without a verified preview capability, hand off to AIRA.
-3. For KPI questions, use an approved analysis matching the requested metric
+4. For KPI questions, use an approved analysis matching the requested metric
    and period; otherwise hand off. Report its actual time window and freshness.
-4. Read the result and saved object back. A saved draft does not prove all
+5. Read the result and saved object back. A saved draft does not prove all
    requested copy or imagery was generated. Use operation polling only when
    the tool returns a documented handle.
 
@@ -92,12 +99,17 @@ https://app.accessfuel.com/console/<workspaceSlug>/aira?agent=<agent>&prompt=<en
   scope prefix, must fit within 4,000 JavaScript string units. Never truncate
   silently. For a longer or sensitive brief, open a blank new AIRA chat and
   ask the user to enter the full scoped message themselves.
-- Read back the prefill before asking the user to send. Plain-text `@name`
-  is not a resolved mention: ask the user to select the matching entry from
-  the @ menu and verify the resulting chip. Never type into the composer.
-- Chain only requested steps: read the saved audience before creating its
-  persona, then read the persona before drafting its campaign. After the user
-  says AIRA finished, read the chat or relevant object page for results.
+- Read back the prefill before sending or asking the user to send. Plain-text
+  `@name` is not a resolved mention: select the exact matching entry from the
+  @ menu and verify the resulting chip, or ask the user to do so.
+- When the user asked you to perform the work, submit the scoped message and
+  operate only the permitted creation and draft-review controls. Otherwise stop
+  after the verified prefill and ask the user to send it.
+- Chain only requested steps. After audience creation, read the exact saved
+  audience and retain its workspace, ID, resolved criteria, cutoff/date context,
+  preview observation, and saved/live count observation. Generate the persona
+  from that ID, wait for a terminal job state, then read the final persona ID and
+  its saved audience link. Create the campaign with both saved IDs.
 
 ## Errors and completion
 
@@ -111,8 +123,17 @@ https://app.accessfuel.com/console/<workspaceSlug>/aira?agent=<agent>&prompt=<en
   report "completion unverified". Redact errors; do not echo raw arguments.
 - Sign-in interruptions may lose the prefill. Recheck workspace and state before
   rebuilding a link; do not repeat a request already submitted by the user.
-- Report the KPI answer and objects actually created, with verified names,
-  counts and links. Distinguish generated content from saved empty drafts,
-  measured facts from inference, and pending work from completion. State delivery
-  or scheduling status only when verified; never promise nothing was sent merely
-  because that was requested.
+- Persona generation may be queued, generating, completed, or failed. Poll the
+  saved job/object state with bounded waits. Retry only a verified failure; do
+  not submit a second request while the first is queued or generating.
+- Keep preview estimates separate from saved/live counts and include each
+  observation time or freshness. A difference is not an error unless both values
+  describe the same snapshot.
+- Average order value is revenue divided by orders. Average lifetime spend is
+  revenue divided by customers. Never substitute or relabel one as the other.
+- Report the KPI answer and objects actually created, with verified names, IDs,
+  counts and links. For campaigns, verify the requested number of distinct saved
+  draft IDs and that every item remains unscheduled and review-required. Distinguish
+  generated content from saved empty drafts, measured facts from inference, and
+  pending work from completion. State delivery or scheduling status only when
+  verified; never promise nothing was sent merely because that was requested.
