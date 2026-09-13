@@ -1,0 +1,14 @@
+{
+  "name": "accessfuel",
+  "displayName": "AccessFuel",
+  "description": "Use AIRA in AccessFuel from a supported built-in browser.",
+  "version": "1.0.0",
+  "author": {
+    "name": "AccessFuel",
+    "url": "https://www.accessfuel.com"
+  },
+  "homepage": "https://www.accessfuel.com",
+  "repository": "https://github.com/AccessFuel/aira-skill",
+  "license": "MIT",
+  "keywords": ["accessfuel", "aira", "analytics", "marketing"]
+}
